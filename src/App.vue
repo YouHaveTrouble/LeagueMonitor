@@ -8,9 +8,13 @@
       <span>Options</span>
     </div>
   </nav>
-  <main v-if="itemData !== null">
+  <main v-if="itemData !== null && championData !== null">
     <keep-alive>
-      <LiveGame :game-data="gameData" :item-data="itemData" v-if="currentTab === 'liveGame'"/>
+      <LiveGame
+          :game-data="gameData"
+          :item-data="itemData"
+          :champion-data="championData"
+          v-if="currentTab === 'liveGame'"/>
     </keep-alive>
   </main>
 </template>
@@ -32,6 +36,7 @@ export default {
       gameCheck: null,
       gameData: null,
       itemData: null,
+      championData: null,
     }
   },
   methods: {
@@ -45,6 +50,10 @@ export default {
         if (error) {
           this.gameData = null;
         } else {
+          if (response.statusCode !== 200) {
+            this.gameData = null;
+            return;
+          }
           this.gameData = JSON.parse(body);
         }
       });
@@ -63,10 +72,27 @@ export default {
        this.itemData = jsonItemData.data;
       });
 
+    },
+    async getChampionData() {
+      await request.get({
+        url: "https://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion.json",
+      }, (error, response, data) => {
+        if (error) {
+          return;
+        }
+        const jsonChampionData = JSON.parse(data);
+
+        this.championData = {};
+        for (const champId in jsonChampionData.data) {
+          this.championData[champId.toLocaleLowerCase("EN")] = jsonChampionData.data[champId];
+        }
+      });
+
     }
   },
   async mounted() {
     await this.getItemData();
+    await this.getChampionData();
     await this.checkForGame();
   },
   beforeUnmount() {

@@ -4,7 +4,8 @@
   <article class="currentPlayer">
     <div class="champion-icon">
       <img
-          :src="`https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/${encodeURI(activePlayerChampion.championName) || 'Aatrox'}.png`"
+          v-if="activePlayerChampion"
+          :src="`https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/${encodeURI(championData[activePlayerChampion.championName]?.image.full)}`"
           alt=""
           draggable="false"
       >
@@ -17,7 +18,7 @@
     <div class="player" v-for="player in enemies" :key="player.summonerName">
       <div class="champion-icon">
         <img
-            :src="`https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/${encodeURI(player.championName) || 'Aatrox'}.png`"
+            :src="`https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/${encodeURI(championData[player.championName]?.image.full)}`"
             alt=""
             draggable="false"
         >
@@ -49,6 +50,9 @@ export default {
     },
     itemData: {
       type: Object,
+    },
+    championData: {
+      Type: Object,
     }
   },
   methods: {
@@ -98,14 +102,9 @@ export default {
     normalizeChampionName(name) {
 
       name = name.replace("'", "");
+      name = name.replace(" ", "");
 
-      const firstLetter = name.charAt(0);
-
-      const firstLetterCap = firstLetter.toUpperCase();
-
-      const remainingLetters = name.slice(1).toLowerCase();
-
-      return firstLetterCap + remainingLetters;
+      return name.toLowerCase();
     }
   },
   mounted() {
