@@ -1,6 +1,5 @@
 <template>
 <section v-if="gameData !== null" class="live-game">
-
   <article class="currentPlayer">
     <div class="champion-icon">
       <img
@@ -30,6 +29,9 @@
   </article>
 
 </section>
+  <section v-else class="no-game">
+    <p>No live game detected</p>
+  </section>
 </template>
 
 <script>
@@ -102,6 +104,7 @@ export default {
     normalizeChampionName(name) {
 
       name = name.replace("'", "");
+      name = name.replace(".", "");
       name = name.replace(" ", "");
 
       return name.toLowerCase();
@@ -142,6 +145,7 @@ export default {
     padding-top: 3rem;
     width: 100%;
     gap: 1.5rem;
+    flex-wrap: wrap;
     .player {
       display: flex;
       flex-direction: column;
@@ -189,5 +193,11 @@ export default {
     font-weight: bold;
   }
 }
-
+.no-game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  height: 100%;
+}
 </style>

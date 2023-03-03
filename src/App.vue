@@ -24,6 +24,7 @@
 import LiveGame from "./components/LiveGame.vue";
 
 const request = require('request');
+const { version, displayName } = require('../package.json');
 
 export default {
   name: 'App',
@@ -37,6 +38,11 @@ export default {
       gameData: null,
       itemData: null,
       championData: null,
+      supportedGamemodes: [
+          "CLASSIC",
+          "ARAM",
+          "PRACTICETOOL",
+      ]
     }
   },
   methods: {
@@ -52,14 +58,24 @@ export default {
         } else {
           if (response.statusCode !== 200) {
             this.gameData = null;
+            this.gameCheck = setTimeout(() => {
+              this.checkForGame();
+            }, 100);
             return;
           }
-          this.gameData = JSON.parse(body);
+          const dataJson = JSON.parse(body);
+
+          if (!this.supportedGamemodes.includes(dataJson.gameData.gamemode)) {
+            this.gameData = dataJson;
+
+          }
+          this.gameCheck = setTimeout(() => {
+            this.checkForGame();
+          }, 100);
+
         }
       });
-      this.gameCheck = setTimeout(() => {
-        this.checkForGame();
-      }, 100);
+
     },
     async getItemData() {
       await request.get({
@@ -91,6 +107,8 @@ export default {
     }
   },
   async mounted() {
+    document.title = `${displayName} ${version}`
+
     await this.getItemData();
     await this.getChampionData();
     await this.checkForGame();
@@ -103,7 +121,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 nav {
   display: flex;
   flex-direction: row;
