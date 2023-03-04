@@ -53,28 +53,24 @@ export default {
         requestCert: false,
         agent: false,
       }, (error, response, body) => {
+        this.gameCheck = setTimeout(() => {
+          this.checkForGame();
+        }, 200);
         if (error) {
           this.gameData = null;
         } else {
           if (response.statusCode !== 200) {
             this.gameData = null;
-            this.gameCheck = setTimeout(() => {
-              this.checkForGame();
-            }, 100);
             return;
           }
           const dataJson = JSON.parse(body);
 
           if (!this.supportedGamemodes.includes(dataJson.gameData.gamemode)) {
             this.gameData = dataJson;
-
           }
-          this.gameCheck = setTimeout(() => {
-            this.checkForGame();
-          }, 100);
-
         }
       });
+
 
     },
     async getItemData() {
