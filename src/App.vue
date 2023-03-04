@@ -14,14 +14,21 @@
           :game-data="gameData"
           :item-data="itemData"
           :champion-data="championData"
-          v-if="currentTab === 'liveGame'"/>
+          v-if="currentTab === 'liveGame'"
+      />
     </keep-alive>
+    <AppOptions
+        v-if="currentTab === 'options'"
+        @volumechange="options.sound.volume = $event"
+        @announcerEnabledChange="options.announcer.enabled = $event"
+    />
   </main>
 </template>
 
 <script>
 
 import LiveGame from "./components/LiveGame.vue";
+import AppOptions from "@/components/AppOptions.vue";
 
 const request = require('request');
 const { version, displayName } = require('../package.json');
@@ -29,6 +36,7 @@ const { version, displayName } = require('../package.json');
 export default {
   name: 'App',
   components: {
+    AppOptions,
     LiveGame,
   },
   data() {
@@ -42,7 +50,15 @@ export default {
           "CLASSIC",
           "ARAM",
           "PRACTICETOOL",
-      ]
+      ],
+      options: {
+        sound: {
+          volume: window.localStorage.getItem("sound.volume") ?? "50",
+        },
+        announcer: {
+          enabled: window.localStorage.getItem("announcer.enabled") === "true",
+        }
+      }
     }
   },
   methods: {
