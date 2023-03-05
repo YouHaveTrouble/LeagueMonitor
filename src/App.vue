@@ -8,6 +8,12 @@
       <span>Options</span>
     </div>
   </nav>
+  <AnnouncerProcess
+      v-if="options.announcer.enabled"
+      :sound-volume="options.sound.volume"
+      :events="gameData?.events?.Events"
+      :game-time="gameData?.gameData?.gameTime"
+  />
   <main v-if="itemData !== null && championData !== null">
     <keep-alive>
       <LiveGame
@@ -29,6 +35,7 @@
 
 import LiveGame from "./components/LiveGame.vue";
 import AppOptions from "@/components/AppOptions.vue";
+import AnnouncerProcess from "@/components/AnnouncerProcess.vue";
 
 const request = require('request');
 const { version, displayName } = require('../package.json');
@@ -36,6 +43,7 @@ const { version, displayName } = require('../package.json');
 export default {
   name: 'App',
   components: {
+    AnnouncerProcess,
     AppOptions,
     LiveGame,
   },
@@ -44,6 +52,7 @@ export default {
       currentTab: "liveGame",
       gameCheck: null,
       gameData: null,
+      gameTime: null,
       itemData: null,
       championData: null,
       supportedGamemodes: [
@@ -74,15 +83,18 @@ export default {
         }, 200);
         if (error) {
           this.gameData = null;
+          this.gameTime = null;
         } else {
           if (response.statusCode !== 200) {
             this.gameData = null;
+            this.gameTime = null;
             return;
           }
           const dataJson = JSON.parse(body);
 
           if (!this.supportedGamemodes.includes(dataJson.gameData.gamemode)) {
             this.gameData = dataJson;
+            this.gameTime = dataJson.gameData.gameTime;
           }
         }
       });
