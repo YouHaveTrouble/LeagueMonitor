@@ -24,14 +24,14 @@ export default {
       deep: true,
       handler(newSoundOptions) {
         window.localStorage.setItem("sound.volume", newSoundOptions.volume);
-        this.$emit("volumeChange", newSoundOptions.volume)
+        this.$emit("volumeChange", Number.parseInt(newSoundOptions.volume))
       }
     },
     announcer: {
       deep: true,
       handler(newValue) {
         window.localStorage.setItem("announcer.enabled", `${newValue.enabled}`)
-        this.$emit("announcerEnabledChange", newValue.enabled)
+        this.$emit("announcerEnabledChange", newValue.enabled);
       }
     }
   },

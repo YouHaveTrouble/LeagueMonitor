@@ -19,7 +19,7 @@
     </keep-alive>
     <AppOptions
         v-if="currentTab === 'options'"
-        @volumechange="options.sound.volume = $event"
+        @volumeChange="options.sound.volume = $event"
         @announcerEnabledChange="options.announcer.enabled = $event"
     />
   </main>
@@ -53,7 +53,7 @@ export default {
       ],
       options: {
         sound: {
-          volume: window.localStorage.getItem("sound.volume") ?? "50",
+          volume: window.localStorage.getItem("sound.volume") ? Number.parseInt(window.localStorage.getItem("sound.volume")) : 50,
         },
         announcer: {
           enabled: window.localStorage.getItem("announcer.enabled") === "true",
